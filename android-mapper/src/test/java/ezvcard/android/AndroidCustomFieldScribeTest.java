@@ -1,8 +1,9 @@
 package ezvcard.android;
 
-import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
 
 /**
  * @author Michael Angstadt

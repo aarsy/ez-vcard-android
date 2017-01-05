@@ -81,6 +81,7 @@ public class VcardParser extends ActionBarActivity {
             
             ContactOperations operations = new ContactOperations(getApplicationContext(), "Phone", "com.motorola.android.buacontactadapter");
             VCard vcard = null;
+
             while ((vcard = reader.readNext()) != null) {
                 operations.insertContact(vcard);
             }

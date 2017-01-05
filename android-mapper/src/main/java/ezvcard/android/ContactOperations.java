@@ -1,6 +1,11 @@
 package ezvcard.android;
 
-import static android.text.TextUtils.isEmpty;
+import android.content.ContentProviderOperation;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.OperationApplicationException;
+import android.os.RemoteException;
+import android.provider.ContactsContract;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -10,14 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.annotation.TargetApi;
-import android.content.ContentProviderOperation;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.OperationApplicationException;
-import android.os.Build;
-import android.os.RemoteException;
-import android.provider.ContactsContract;
 import ezvcard.VCard;
 import ezvcard.property.Address;
 import ezvcard.property.Birthday;
@@ -35,6 +32,8 @@ import ezvcard.property.Title;
 import ezvcard.property.Url;
 import ezvcard.property.VCardProperty;
 import ezvcard.util.TelUri;
+
+import static android.text.TextUtils.isEmpty;
 
 /*
  Copyright (c) 2014-2015, Michael Angstadt
@@ -93,6 +92,7 @@ public class ContactOperations {
 		// TODO handle Raw properties - Raw properties include various extension which start with "X-" like X-ASSISTANT, X-AIM, X-SPOUSE
 
 		List<NonEmptyContentValues> contentValues = new ArrayList<NonEmptyContentValues>();
+		//contentValues.add(account);
 		convertName(contentValues, vcard);
 		convertNickname(contentValues, vcard);
 		convertPhones(contentValues, vcard);
@@ -113,14 +113,14 @@ public class ContactOperations {
 		convertNotes(contentValues, vcard);
 		convertPhotos(contentValues, vcard);
 		convertOrganization(contentValues, vcard);
-
 		ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>(contentValues.size());
 		ContentValues cv = account.getContentValues();
-		//ContactsContract.RawContact.CONTENT_URI needed to add account, backReference is also not needed
+		//@formatter:off
 		ContentProviderOperation operation =
-				ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI) 
+				ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
 						.withValues(cv)
 						.build();
+		//@formatter:on
 		operations.add(operation);
 		for (NonEmptyContentValues values : contentValues) {
 			cv = values.getContentValues();
@@ -136,8 +136,8 @@ public class ContactOperations {
 				.build();
 			//@formatter:on
 			operations.add(operation);
+			//Log.d("myoperation ", " "+operation.toString());
 		}
-
 		// Executing all the insert operations as a single database transaction
 		context.getContentResolver().applyBatch(ContactsContract.AUTHORITY, operations);
 	}

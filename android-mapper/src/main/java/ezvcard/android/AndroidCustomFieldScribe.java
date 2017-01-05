@@ -1,5 +1,7 @@
 package ezvcard.android;
 
+import com.github.mangstadt.vinnie.io.VObjectPropertyValues;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -9,6 +11,7 @@ import ezvcard.VCardDataType;
 import ezvcard.VCardVersion;
 import ezvcard.io.SkipMeException;
 import ezvcard.io.scribe.VCardPropertyScribe;
+import ezvcard.io.text.WriteContext;
 import ezvcard.parameter.VCardParameters;
 
 /*
@@ -57,7 +60,7 @@ public class AndroidCustomFieldScribe extends VCardPropertyScribe<AndroidCustomF
 	}
 
 	@Override
-	protected String _writeText(AndroidCustomField property, VCardVersion version) {
+	protected String _writeText(AndroidCustomField property, WriteContext context) {
 		String type = property.getType();
 		List<String> values = property.getValues();
 
@@ -69,12 +72,13 @@ public class AndroidCustomFieldScribe extends VCardPropertyScribe<AndroidCustomF
 		} else {
 			out.addAll(values);
 		}
-		return structured(out.toArray());
+		return VObjectPropertyValues.writeList(out);
 	}
+
 
 	@Override
 	protected AndroidCustomField _parseText(String value, VCardDataType dataType, VCardVersion version, VCardParameters parameters, List<String> warnings) {
-		VCardPropertyScribe.SemiStructuredIterator it = semistructured(value);
+		VObjectPropertyValues.SemiStructuredValueIterator it = new VObjectPropertyValues.SemiStructuredValueIterator(value);
 
 		String uri = it.next();
 		if (uri == null){

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.provider.ContactsContract;
+import android.util.Log;
+
 import ezvcard.parameter.AddressType;
 import ezvcard.parameter.EmailType;
 import ezvcard.parameter.TelephoneType;
@@ -244,6 +246,7 @@ public class DataMappings {
     public static int getPhoneType(Telephone property) {
     	for (TelephoneType type : property.getTypes()){
     		Integer androidType = phoneTypeMappings.get(type);
+			Log.d("DataMappings", "Phone Type "+type.getValue());
     		if (androidType != null){
     			return androidType;
     		}
